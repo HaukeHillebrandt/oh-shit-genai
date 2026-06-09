@@ -12,7 +12,7 @@ import json, html, re, datetime
 
 comments = json.load(open('hn_comments.json'))
 summaries = {int(k): v for k, v in json.load(open('summaries.json')).items()}
-cats = {int(k): v for k, v in json.load(open('categories.json')).items()}
+cats = {int(k): v for k, v in json.load(open('categories_v2.json')).items()}  # Sonnet pass w/ drop
 usable = [c for c in comments if len(c['text']) > 20]
 
 URL_RE = re.compile(r'(https?://[^\s<>"\)]+)')
@@ -55,14 +55,17 @@ CATS = [
  ("dark", "The dark 'oh shit' (uh-oh)",
   "Weaponized exploits, surveillance and profiling, job-loss dread, the bubble and circular financing, 'AI psychosis' colleagues, deskilling, energy and climate, astroturfing, suicides."),
  ("skeptic", "The skeptics & the unimpressed",
-  "No 'oh shit' at all: 'glorified autocomplete', a 'BS machine', fails outside its training distribution, only does CRUD, the illusion-breaking tests."),
- ("other", "Other moments, meta & hard to classify",
-  "Everything that didn't fit one bucket cleanly — generic 'first time I tried it' awe, mixed multi-part stories, jokes, and meta commentary about the thread itself."),
+  "A substantive 'no' — 'glorified autocomplete', a 'BS machine', fails outside its training distribution, only does CRUD, the illusion-breaking tests."),
 ]
 
 by_cat = {k: [] for k, _, _ in CATS}
+n_drop = 0
 for i in range(len(usable)):
-    by_cat.get(cats.get(i, 'other'), by_cat['other']).append(i)
+    k = cats.get(i, 'drop')
+    if k in by_cat:
+        by_cat[k].append(i)
+    else:
+        n_drop += 1   # 'drop' = not a real moment (questions, meta, banter) — excluded from bullets
 
 def bullet(idx):
     c = usable[idx]
@@ -158,7 +161,8 @@ page = f'''<!DOCTYPE html>
   <h1>&ldquo;Oh shit&rdquo; moments with GenAI</h1>
   <p class="sub">Every comment from the Hacker News thread
   <em>&ldquo;Ask HN: What was your &lsquo;oh shit&rsquo; moment with GenAI?&rdquo;</em> distilled to one line and sorted into themes.
-  <strong>{n_total}</strong> comments ({n_top} top-level answers, {n_reply} replies) → {len(usable)} moments.
+  <strong>{n_total}</strong> comments ({n_top} top-level, {n_reply} replies) &rarr; <strong>{len(usable)-n_drop}</strong> actual moments,
+  with {n_drop} non-moments (questions, meta, thread banter) filtered out.
   Built {today}. Each bullet's footnote &mdash; <strong>hover</strong> to preview the full comment, click to jump to it.</p>
   <p class="toc">{toc}</p>
 

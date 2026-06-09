@@ -2,18 +2,19 @@
 
 Every comment from the Hacker News thread *"Ask HN: What was your 'oh shit' moment with GenAI?"* distilled to a single line.
 
-**1,104 comments** (472 top-level answers + 632 replies) → 1,093 substantive ones, each distilled to one line and sorted into **18 themes** (from "Resurrecting dead / undocumented hardware" to "The skeptics & the unimpressed").
+**1,104 comments** (472 top-level answers + 632 replies). A classifier pass keeps the **634 that are actual "oh shit" moments** and filters out 459 non-moments (questions, "can you share how?", thread meta, banter). Each kept moment is distilled to one line and sorted into **17 themes** (from "Resurrecting dead / undocumented hardware" to "The skeptics & the unimpressed").
 
 👉 **[View the page](https://haukehillebrandt.github.io/oh-shit-genai/)**
 
-Every moment is a bullet under its category, ending in a footnote: **hover** it to preview the full comment, **click** to jump to it. There's a live search box, a category jump-bar, and a "top-level only" toggle. The full threaded comments sit below as the footnote targets.
+Every moment is a bullet under its category, ending in a footnote: **hover** it to preview the full comment, **click** to jump to it. There's a live search box, a category jump-bar, and a "top-level only" toggle. The full threaded comments (all 1,093) sit below as the footnote targets.
 
 ## How it was built
 
 1. `hn_thread_source.html` — the saved HN thread page.
 2. Parsed with BeautifulSoup into `hn_comments.json` (author, indent depth, text).
-3. Each comment distilled to one line → `summaries.json`, and assigned a theme → `categories.json` (both produced by a fan-out of 10 parallel agents over the comment chunks).
-4. `build_oh_shit_html.py` renders the categorized bullets + threaded full comments + hover-preview footnotes into `index.html`.
+3. Each comment distilled to one line → `summaries.json` (fan-out of 10 parallel agents).
+4. Each comment assigned a theme — or flagged as a non-moment — by a second fan-out (10 Sonnet agents) → `categories_v2.json`. (`categories.json` is the earlier, looser Haiku pass, kept for reference.)
+5. `build_oh_shit_html.py` renders the categorized bullets (drops excluded) + the full threaded comments + hover-preview footnotes into `index.html`.
 
 Regenerate:
 
