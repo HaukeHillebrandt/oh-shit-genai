@@ -23,3 +23,9 @@ python3 build_oh_shit_html.py   # reads hn_comments.json + summaries.json, write
 ```
 
 The thematic summary at the top is a human synthesis; the per-comment one-liners cover all 1,093 comments exhaustively.
+
+## Second page: Did Fable 5 beat the field?
+
+Same pipeline applied to the HN **"Claude Fable 5"** release thread (1,661 comments): every first-hand report of Fable 5 **outperforming** other LLMs (48), **mixed** verdicts (21), and — for balance — where it **underperformed** (114, dominated by safety-fallback complaints).
+
+👉 **[View it](https://haukehillebrandt.github.io/oh-shit-genai/fable5/)** · sources & data in [`fable5/`](fable5/)
